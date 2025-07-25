@@ -1,0 +1,61 @@
+## *Project Title:*  
+*AI-Powered Disaster Relief Coordinator (Simplified, API-Light Version)*
+
+---
+
+## *Project Description:*  
+This is an online system designed to coordinate disaster relief efforts in real-time using built-in AI tools. It helps connect victims, volunteers, and resources (like food, shelter, and medical aid) during disasters. The system uses simple tools and avoids third-party APIs where possible, except for using *OpenStreetMap* for mapping.
+
+AI predictions are based on preloaded data and user inputs — including weather conditions, victim counts, and on-site updates — to keep it efficient and usable in offline or limited environments.
+
+---
+
+## *Key Features:*
+
+### 1. *Web-Based Platform:*
+- Runs in a browser (desktop or mobile).
+- Can work in offline-first mode using service workers.
+- Simple and clean UI for disaster reports, maps, and coordination.
+
+### 2. *User Roles:*
+- *Victim:* Submits requests for help with details like:
+  - Number of people affected
+  - Type of help needed (food, shelter, medical, etc.)
+  - Optional photo of the disaster
+  - Current weather and situation input
+- *Volunteer:* Registers skills, resources, and current location.
+- *Coordinator (AI):* Matches volunteers/resources with victims based on urgency, location, and availability.
+
+### 3. *AI Modules (No External API):*
+- *Urgency Classification:* Classifies help requests (low, medium, high) using preloaded AI models and NLP.
+- *Image Analysis:* Detects damage level from uploaded images.
+- *Volunteer Matching:* Matches based on location and type of help needed.
+- *Forecasting:* Predicts which areas will need more resources based on user inputs and historical data.
+
+### 4. *Mapping & Location:*
+- Uses *OpenStreetMap API* for displaying maps.
+- User location is retrieved via browser’s geolocation.
+- Custom logic for routing (e.g., shortest path) using algorithms like A* or Dijkstra.
+
+---
+
+## *Tech Stack (Simplified):*
+
+### *Frontend:*
+- React.js or plain HTML/CSS + JavaScript
+- Service Workers for offline access
+- OpenStreetMap API for map rendering
+
+### *Backend:*
+- Python (Flask or FastAPI)
+- SQLite or PostgreSQL for storing data
+- AI models loaded locally (no need to train during use)
+
+### *AI Tools:*
+- Pre-trained models using TensorFlow or PyTorch
+- Input data for predictions includes:
+  - Victim details
+  - Weather input
+  - Photo uploads
+
+---

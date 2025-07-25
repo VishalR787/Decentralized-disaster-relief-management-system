@@ -1,0 +1,196 @@
+{% extends 'layout.html' %}
+
+{% block title %}Victim Dashboard - Disaster Relief Coordinator{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-3"><i class="fas fa-hands me-2 text-danger"></i> Victim Dashboard</h1>
+        <p class="lead">Submit your request for help and we'll match you with the most suitable volunteers.</p>
+    </div>
+</div>
+
+<!-- Logged out view -->
+<div class="logged-out">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card border-0 bg-dark shadow-sm">
+                <div class="card-body text-center p-5">
+                    <h3 class="mb-4">Please Register First</h3>
+                    <p class="mb-4">You need to register before you can request help.</p>
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus me-2"></i> Register Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logged in view for victims -->
+<div class="logged-in victim-only" style="display: none;">
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <!-- Submit help request form -->
+            <div class="card border-0 bg-dark shadow-sm mb-4">
+                <div class="card-header bg-primary bg-opacity-25 border-0">
+                    <h3 class="mb-0"><i class="fas fa-hands me-2"></i> Request Help</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form id="help-request-form" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="help_type" class="form-label">What kind of help do you need?</label>
+                            <select class="form-select" id="help_type" name="help_type" required>
+                                <option value="">-- Select Help Type --</option>
+                                <option value="food">Food</option>
+                                <option value="shelter">Shelter</option>
+                                <option value="medical">Medical Assistance</option>
+                                <option value="evacuation">Evacuation</option>
+                                <option value="rescue">Rescue</option>
+                                <option value="supplies">Supplies</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="people_affected" class="form-label">How many people need help?</label>
+                            <input type="number" class="form-control" id="people_affected" name="people_affected" min="1" value="1" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Describe your situation</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Please provide details about your situation and specific needs"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="weather_condition" class="form-label">Current weather conditions (if applicable)</label>
+                            <select class="form-select" id="weather_condition" name="weather_condition">
+                                <option value="">-- Select Weather Condition --</option>
+                                <option value="clear">Clear</option>
+                                <option value="rain">Rain</option>
+                                <option value="heavy_rain">Heavy Rain</option>
+                                <option value="flooding">Flooding</option>
+                                <option value="storm">Storm</option>
+                                <option value="snow">Snow</option>
+                                <option value="extreme_heat">Extreme Heat</option>
+                                <option value="extreme_cold">Extreme Cold</option>
+                                <option value="windy">Windy</option>
+                                <option value="foggy">Foggy</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Upload an image of the situation (optional)</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="form-text">Image will be analyzed to assess damage level</div>
+                        </div>
+                        
+                        <!-- Hidden inputs for AI analysis results -->
+                        <input type="hidden" id="damage_level" name="damage_level" value="">
+                        <input type="hidden" id="urgency_level" name="urgency_level" value="">
+                        
+                        <!-- Image analysis preview -->
+                        <div id="damage-analysis-preview" class="mt-3"></div>
+                        
+                        <!-- AI-suggested urgency level -->
+                        <div id="urgency-indicator" class="mb-3"></div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Request
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Request status -->
+            <div id="request-status"></div>
+        </div>
+        
+        <div class="col-lg-5">
+            <!-- Location Map -->
+            <div class="card border-0 bg-dark shadow-sm mb-4">
+                <div class="card-header bg-primary bg-opacity-25 border-0">
+                    <h3 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> Your Location</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 300px;"></div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i> Your location helps us find nearby volunteers
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Matches -->
+            <div class="card border-0 bg-dark shadow-sm">
+                <div class="card-header bg-primary bg-opacity-25 border-0">
+                    <h3 class="mb-0"><i class="fas fa-handshake me-2"></i> Your Matches</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div id="matches-container">
+                        <div class="text-center py-4">
+                            <div class="disaster-relief-spinner mx-auto mb-3"></div>
+                            <p>Loading matches...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logged in view for volunteers (wrong role) -->
+<div class="logged-in volunteer-only" style="display: none;">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card border-0 bg-dark shadow-sm">
+                <div class="card-body text-center p-5">
+                    <h3 class="mb-4">Wrong Dashboard</h3>
+                    <p class="mb-4">You are registered as a volunteer. Please go to the Volunteer Dashboard instead.</p>
+                    <a href="/volunteer" class="btn btn-primary btn-lg">
+                        <i class="fas fa-hand-holding-heart me-2"></i> Go to Volunteer Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add event listener for image upload
+        const imageInput = document.getElementById('image');
+        if (imageInput) {
+            imageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.createElement('img');
+                        preview.src = e.target.result;
+                        preview.className = 'img-thumbnail mb-3';
+                        preview.style.maxHeight = '200px';
+                        
+                        const previewContainer = document.getElementById('damage-analysis-preview');
+                        previewContainer.innerHTML = '';
+                        previewContainer.appendChild(preview);
+                        
+                        // Add loading indicator
+                        const loadingText = document.createElement('p');
+                        loadingText.className = 'text-muted';
+                        loadingText.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Analyzing image...';
+                        previewContainer.appendChild(loadingText);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

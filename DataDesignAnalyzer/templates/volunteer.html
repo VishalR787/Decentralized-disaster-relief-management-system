@@ -1,0 +1,279 @@
+{% extends 'layout.html' %}
+
+{% block title %}Volunteer Dashboard - Disaster Relief Coordinator{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-3"><i class="fas fa-hand-holding-heart me-2 text-success"></i> Volunteer Dashboard</h1>
+        <p class="lead">Register your skills and resources to help those in need during disasters.</p>
+    </div>
+</div>
+
+<!-- Logged out view -->
+<div class="logged-out">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card border-0 bg-dark shadow-sm">
+                <div class="card-body text-center p-5">
+                    <h3 class="mb-4">Please Register First</h3>
+                    <p class="mb-4">You need to register before you can volunteer.</p>
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus me-2"></i> Register Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logged in view for volunteers -->
+<div class="logged-in volunteer-only" style="display: none;">
+    <div class="row">
+        <div class="col-lg-7 mb-4">
+            <!-- Submit volunteer skills form -->
+            <div class="card border-0 bg-dark shadow-sm mb-4">
+                <div class="card-header bg-primary bg-opacity-25 border-0">
+                    <h3 class="mb-0"><i class="fas fa-tasks me-2"></i> Register Your Skills</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form id="volunteer-skills-form">
+                        <div id="skill-fields">
+                            <div class="skill-row mb-3">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Skill/Capability</label>
+                                        <select class="form-select" name="skills[]" required>
+                                            <option value="">Select Skill</option>
+                                            <option value="medical">Medical</option>
+                                            <option value="driving">Driving</option>
+                                            <option value="cooking">Cooking</option>
+                                            <option value="rescue">Rescue</option>
+                                            <option value="logistics">Logistics</option>
+                                            <option value="construction">Construction</option>
+                                            <option value="communication">Communication</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Resource (Optional)</label>
+                                        <select class="form-select" name="resources[]">
+                                            <option value="">Select Resource</option>
+                                            <option value="vehicle">Vehicle</option>
+                                            <option value="food">Food</option>
+                                            <option value="shelter">Shelter Space</option>
+                                            <option value="medical_supplies">Medical Supplies</option>
+                                            <option value="tools">Tools</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Quantity</label>
+                                        <input type="number" class="form-control" name="quantities[]" placeholder="Quantity" min="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <button type="button" id="add-skill-button" class="btn btn-outline-secondary">
+                                <i class="fas fa-plus me-2"></i> Add Another Skill/Resource
+                            </button>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Your current location will be automatically shared to help match you with nearby victims. Make sure your device's location services are enabled.
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Skills
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Skills status -->
+            <div id="skills-status"></div>
+        </div>
+        
+        <div class="col-lg-5">
+            <!-- Location Map -->
+            <div class="card border-0 bg-dark shadow-sm mb-4">
+                <div class="card-header bg-primary bg-opacity-25 border-0">
+                    <h3 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i> Your Location</h3>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map" style="height: 300px;"></div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle me-1"></i> Your location helps us match you with nearby victims
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Matches -->
+            <div class="card border-0 bg-dark shadow-sm">
+                <div class="card-header bg-primary bg-opacity-25 border-0">
+                    <h3 class="mb-0"><i class="fas fa-handshake me-2"></i> Your Matches</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div id="matches-container">
+                        <div class="text-center py-4">
+                            <div class="disaster-relief-spinner mx-auto mb-3"></div>
+                            <p>Loading matches...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Resource Forecast -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card border-0 bg-dark shadow-sm">
+                <div class="card-header bg-primary bg-opacity-25 border-0 d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0"><i class="fas fa-chart-line me-2"></i> Resource Forecast</h3>
+                    <button class="btn btn-sm btn-outline-secondary" id="refresh-forecast">
+                        <i class="fas fa-sync-alt me-1"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body p-4">
+                    <div id="forecast-container">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> The forecast shows predicted resource needs in your area based on recent requests and conditions.
+                        </div>
+                        
+                        <div id="forecast-loading" class="text-center py-4">
+                            <div class="disaster-relief-spinner mx-auto mb-3"></div>
+                            <p>Loading resource forecast...</p>
+                        </div>
+                        
+                        <div id="forecast-data" style="display: none;">
+                            <!-- Forecast data will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logged in view for victims (wrong role) -->
+<div class="logged-in victim-only" style="display: none;">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card border-0 bg-dark shadow-sm">
+                <div class="card-body text-center p-5">
+                    <h3 class="mb-4">Wrong Dashboard</h3>
+                    <p class="mb-4">You are registered as a victim. Please go to the Victim Dashboard instead.</p>
+                    <a href="/victim" class="btn btn-primary btn-lg">
+                        <i class="fas fa-hands me-2"></i> Go to Victim Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load resource forecast
+        const loadForecast = async () => {
+            const forecastData = document.getElementById('forecast-data');
+            const forecastLoading = document.getElementById('forecast-loading');
+            
+            try {
+                // Show loading
+                forecastLoading.style.display = 'block';
+                forecastData.style.display = 'none';
+                
+                // Get user location
+                const location = await getUserLocation().catch(() => ({ lat: 0, lng: 0 }));
+                
+                // Fetch forecast
+                const response = await fetch(`/api/resource-forecast?lat=${location.lat}&lng=${location.lng}`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Create forecast display
+                    let forecastHTML = '<div class="row">';
+                    
+                    const helpTypes = Object.keys(data.forecast);
+                    
+                    if (helpTypes.length === 0) {
+                        forecastHTML = '<div class="alert alert-info">No resource forecasts available for your area yet.</div>';
+                    } else {
+                        for (const helpType of helpTypes) {
+                            const forecast = data.forecast[helpType];
+                            const confidencePercent = Math.round(forecast.confidence * 100);
+                            
+                            // Choose icon based on help type
+                            let icon = 'question-circle';
+                            if (helpType === 'food') icon = 'utensils';
+                            else if (helpType === 'shelter') icon = 'home';
+                            else if (helpType === 'medical') icon = 'first-aid';
+                            else if (helpType === 'evacuation') icon = 'truck';
+                            else if (helpType === 'rescue') icon = 'life-ring';
+                            else if (helpType === 'supplies') icon = 'box';
+                            
+                            forecastHTML += `
+                                <div class="col-md-4 mb-3">
+                                    <div class="card bg-dark border-primary">
+                                        <div class="card-body">
+                                            <h5 class="card-title">
+                                                <i class="fas fa-${icon} me-2"></i> 
+                                                ${helpType.charAt(0).toUpperCase() + helpType.slice(1)}
+                                            </h5>
+                                            <p class="mb-1">Predicted demand: <strong>${forecast.predicted_demand}</strong> people</p>
+                                            <div class="progress mb-3" style="height: 5px;">
+                                                <div class="progress-bar" role="progressbar" style="width: ${confidencePercent}%"></div>
+                                            </div>
+                                            <p class="mb-0 text-muted small">Confidence: ${confidencePercent}%</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        forecastHTML += '</div>';
+                    }
+                    
+                    forecastData.innerHTML = forecastHTML;
+                } else {
+                    forecastData.innerHTML = `
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i> 
+                            Failed to load forecast: ${data.message || 'Unknown error'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                forecastData.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i> 
+                        Error: ${error.message || 'Unknown error'}
+                    </div>
+                `;
+            } finally {
+                // Hide loading, show data
+                forecastLoading.style.display = 'none';
+                forecastData.style.display = 'block';
+            }
+        };
+        
+        // Load forecast on page load
+        setTimeout(loadForecast, 1000);
+        
+        // Add refresh button handler
+        const refreshButton = document.getElementById('refresh-forecast');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', loadForecast);
+        }
+    });
+</script>
+{% endblock %}

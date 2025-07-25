@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Disaster Relief Coordinator</title>
+    
+    <!-- Bootstrap CSS (Replit theme) -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .offline-container {
+            max-width: 500px;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .icon-large {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            color: var(--bs-warning);
+        }
+        
+        .footer {
+            margin-top: auto;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-hands-helping me-2"></i>
+                Disaster Relief Coordinator
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main>
+        <div class="container offline-container">
+            <i class="fas fa-wifi-slash icon-large"></i>
+            <h1 class="mb-4">You're Offline</h1>
+            <p class="lead mb-4">You appear to be offline. The Disaster Relief Coordinator app requires an internet connection for most features.</p>
+            
+            <div class="alert alert-info">
+                <p class="mb-0"><i class="fas fa-info-circle me-2"></i> Some features may still work in offline mode. Any data you submit will be stored locally and synchronized when you're back online.</p>
+            </div>
+            
+            <div class="d-grid gap-2 col-md-8 mx-auto mt-4">
+                <button class="btn btn-primary btn-lg" onclick="window.location.reload()">
+                    <i class="fas fa-sync-alt me-2"></i> Try Again
+                </button>
+                <a href="/" class="btn btn-outline-secondary">
+                    <i class="fas fa-home me-2"></i> Go to Homepage
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-hands-helping me-2"></i> Disaster Relief Coordinator</h5>
+                    <p class="text-muted">AI-powered disaster relief coordination system</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">&copy; 2023 Disaster Relief Coordinator</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Check for online status
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>

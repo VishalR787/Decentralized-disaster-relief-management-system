@@ -1,0 +1,271 @@
+{% extends 'layout.html' %}
+
+{% block title %}Disaster Relief Coordinator{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12 text-center">
+        <h1 class="display-4 mb-4"><i class="fas fa-hands-helping me-3"></i>Disaster Relief Coordinator</h1>
+        <p class="lead mb-4">An AI-powered system connecting victims and volunteers during disasters</p>
+    </div>
+</div>
+
+<!-- Logged out view (registration) -->
+<div class="logged-out">
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 bg-dark shadow-sm h-100">
+                <div class="card-body text-center p-5">
+                    <h2 class="mb-4">How it works</h2>
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-user-injured fa-3x text-danger mb-3"></i>
+                                <h5>Victims</h5>
+                                <p class="text-muted small">Request help with details of your situation</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                                <h5>AI Matching</h5>
+                                <p class="text-muted small">Our system finds the best volunteers for your needs</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="p-3">
+                                <i class="fas fa-hands-helping fa-3x text-success mb-3"></i>
+                                <h5>Volunteers</h5>
+                                <p class="text-muted small">Get matched with those who need your skills</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <div class="d-grid">
+                                <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                    Get Started
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 bg-dark shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h2 class="mb-4 text-center">Features</h2>
+                    <ul class="list-group list-group-flush bg-transparent">
+                        <li class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                            <i class="fas fa-map-marked-alt fa-2x text-info me-3"></i>
+                            <div>
+                                <h5 class="mb-1">Location-Based Coordination</h5>
+                                <p class="mb-0 text-muted">Find help and volunteers near you using OpenStreetMap</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                            <i class="fas fa-brain fa-2x text-warning me-3"></i>
+                            <div>
+                                <h5 class="mb-1">AI-Powered Classification</h5>
+                                <p class="mb-0 text-muted">AI analyzes your situation to prioritize urgent needs</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                            <i class="fas fa-image fa-2x text-success me-3"></i>
+                            <div>
+                                <h5 class="mb-1">Image Analysis</h5>
+                                <p class="mb-0 text-muted">Upload images for automated damage assessment</p>
+                            </div>
+                        </li>
+                        <li class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                            <i class="fas fa-wifi-slash fa-2x text-danger me-3"></i>
+                            <div>
+                                <h5 class="mb-1">Offline Capability</h5>
+                                <p class="mb-0 text-muted">Works even when your connection is limited or offline</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title">Register</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="register-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Your Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contact" class="form-label">Contact Information</label>
+                            <input type="text" class="form-control" id="contact" name="contact" placeholder="Phone number or email" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">I am a:</label>
+                            <div class="d-flex">
+                                <div class="form-check form-check-inline flex-fill">
+                                    <input class="form-check-input" type="radio" name="role" id="victim" value="victim" required checked>
+                                    <label class="form-check-label" for="victim">
+                                        <i class="fas fa-hands me-2 text-danger"></i>Victim (need help)
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline flex-fill">
+                                    <input class="form-check-input" type="radio" name="role" id="volunteer" value="volunteer">
+                                    <label class="form-check-label" for="volunteer">
+                                        <i class="fas fa-hand-holding-heart me-2 text-success"></i>Volunteer (offer help)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">
+                                By registering, you agree to share your location data to help with coordination.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Logged in view -->
+<div class="logged-in" style="display: none;">
+    <div class="row mb-5">
+        <div class="col-md-8 offset-md-2">
+            <div class="card border-0 bg-dark shadow-sm">
+                <div class="card-body text-center p-5">
+                    <h2 class="mb-4">Welcome, <span class="user-name"></span>!</h2>
+                    <p class="lead mb-4">You are registered as a <span class="user-role"></span>.</p>
+                    
+                    <div class="victim-only" style="display: none;">
+                        <p class="mb-4">If you need assistance, please submit a help request. Our AI system will match you with suitable volunteers.</p>
+                        <div class="d-grid gap-2 col-md-6 mx-auto">
+                            <a href="/victim" class="btn btn-primary btn-lg">
+                                <i class="fas fa-hands me-2"></i> Go to Victim Dashboard
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="volunteer-only" style="display: none;">
+                        <p class="mb-4">Thank you for volunteering. Please update your skills and resources to be matched with people who need your help.</p>
+                        <div class="d-grid gap-2 col-md-6 mx-auto">
+                            <a href="/volunteer" class="btn btn-primary btn-lg">
+                                <i class="fas fa-hand-holding-heart me-2"></i> Go to Volunteer Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Overview Section -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 bg-dark shadow-sm">
+            <div class="card-header bg-primary bg-opacity-25 border-0">
+                <h3 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i> Live Disaster Map</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div id="map"></div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <span class="me-3"><i class="fas fa-hands text-danger me-1"></i> Victim</span>
+                        <span class="me-3"><i class="fas fa-hands-helping text-success me-1"></i> Volunteer</span>
+                        <span><i class="fas fa-user-circle text-primary me-1"></i> You</span>
+                    </div>
+                    <button id="refresh-map" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-sync-alt me-1"></i> Refresh Map
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Explanation -->
+<div class="row mb-5">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 bg-dark shadow-sm">
+            <div class="card-body p-4">
+                <div class="text-center mb-3">
+                    <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                </div>
+                <h4 class="card-title text-center mb-3">AI-Powered Matching</h4>
+                <p class="card-text">Our system uses AI to match victims with the most suitable volunteers based on urgency, skills needed, and location proximity.</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Urgency classification
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Skill-based matching
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Location optimization
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 bg-dark shadow-sm">
+            <div class="card-body p-4">
+                <div class="text-center mb-3">
+                    <i class="fas fa-mobile-alt fa-3x text-primary mb-3"></i>
+                </div>
+                <h4 class="card-title text-center mb-3">Mobile-Friendly</h4>
+                <p class="card-text">Access the system from any device with a browser. The responsive design works on smartphones, tablets, and desktops.</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Responsive interface
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Works on all devices
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Location services integration
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 bg-dark shadow-sm">
+            <div class="card-body p-4">
+                <div class="text-center mb-3">
+                    <i class="fas fa-wifi-slash fa-3x text-primary mb-3"></i>
+                </div>
+                <h4 class="card-title text-center mb-3">Offline Capability</h4>
+                <p class="card-text">The app works even with limited or no connectivity. Your data will sync when connection is restored.</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Works offline
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Background syncing
+                    </li>
+                    <li class="list-group-item bg-transparent border-secondary">
+                        <i class="fas fa-check-circle text-success me-2"></i> Local data storage
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

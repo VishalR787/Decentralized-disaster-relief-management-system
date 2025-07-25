@@ -1,0 +1,13 @@
+{
+  "name": "datadesignanalyzer",
+  "version": "1.0.0",
+  "description": "AI Project",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "main.py",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "python main.py"
+  }
+}

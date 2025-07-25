@@ -1,0 +1,414 @@
+{% extends 'layout.html' %}
+
+{% block title %}Overview Dashboard - Disaster Relief Coordinator{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="mb-3"><i class="fas fa-chart-line me-2 text-primary"></i> Disaster Relief Overview</h1>
+        <p class="lead">Real-time overview of current disaster relief efforts and coordination.</p>
+    </div>
+</div>
+
+<!-- System Status -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div id="system-status">
+            <div class="text-center py-5">
+                <div class="disaster-relief-spinner mx-auto mb-3"></div>
+                <p>Loading system status...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Map Overview -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 bg-dark shadow-sm">
+            <div class="card-header bg-primary bg-opacity-25 border-0 d-flex justify-content-between align-items-center">
+                <h3 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i> Disaster Map</h3>
+                <button id="refresh-map" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-sync-alt me-1"></i> Refresh Map
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div id="map" style="height: 500px;"></div>
+            </div>
+            <div class="card-footer bg-transparent border-0 py-3">
+                <div class="row">
+                    <div class="col-md-8">
+                        <span class="me-3"><i class="fas fa-hands text-danger me-1"></i> Victim Requests</span>
+                        <span class="me-3"><i class="fas fa-hands-helping text-success me-1"></i> Volunteers</span>
+                        <span class="me-3"><i class="fas fa-user-circle text-primary me-1"></i> Your Location</span>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <span class="me-3"><span class="badge bg-danger">High Urgency</span></span>
+                        <span class="me-3"><span class="badge bg-warning text-dark">Medium Urgency</span></span>
+                        <span><span class="badge bg-info">Low Urgency</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats and Charts -->
+<div class="row">
+    <!-- Help Request Types -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 bg-dark shadow-sm h-100">
+            <div class="card-header bg-primary bg-opacity-25 border-0">
+                <h3 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Help Request Types</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Help Type</th>
+                                <th>Count</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="help-types-table">
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    Loading...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0 bg-dark shadow-sm h-100">
+            <div class="card-header bg-primary bg-opacity-25 border-0">
+                <h3 class="mb-0"><i class="fas fa-history me-2"></i> Recent Activity</h3>
+            </div>
+            <div class="card-body">
+                <div id="recent-activity" class="list-group list-group-flush">
+                    {% for i in range(5) %}
+                    <div class="list-group-item bg-transparent border-secondary d-flex align-items-center gap-3 placeholder-glow">
+                        <span class="placeholder col-1 rounded-circle" style="height: 30px;"></span>
+                        <div class="flex-grow-1">
+                            <span class="placeholder col-4"></span>
+                            <div class="placeholder col-7"></div>
+                        </div>
+                        <span class="placeholder col-2"></span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 bg-primary bg-opacity-25 dashboard-card">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-2x mb-3"></i>
+                <h5 class="card-title">Registered Users</h5>
+                <p class="dashboard-stat" id="total-users">-</p>
+                <div>
+                    <span class="badge bg-info" id="victim-count">- Victims</span>
+                    <span class="badge bg-success" id="volunteer-count">- Volunteers</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 bg-danger bg-opacity-25 dashboard-card">
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                <h5 class="card-title">Pending Requests</h5>
+                <p class="dashboard-stat" id="pending-requests">-</p>
+                <span class="badge bg-danger">Needs Attention</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 bg-warning bg-opacity-25 dashboard-card">
+            <div class="card-body text-center">
+                <i class="fas fa-handshake fa-2x mb-3"></i>
+                <h5 class="card-title">Active Matches</h5>
+                <p class="dashboard-stat" id="active-matches">-</p>
+                <span class="badge bg-warning text-dark">In Progress</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-0 bg-success bg-opacity-25 dashboard-card">
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle fa-2x mb-3"></i>
+                <h5 class="card-title">Resolved Cases</h5>
+                <p class="dashboard-stat" id="resolved-cases">-</p>
+                <span class="badge bg-success">Completed</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI System Status -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 bg-dark shadow-sm">
+            <div class="card-header bg-primary bg-opacity-25 border-0">
+                <h3 class="mb-0"><i class="fas fa-robot me-2"></i> AI System Status</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row" id="ai-status">
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="status-indicator status-online me-2"></div>
+                            <div>
+                                <h5 class="mb-1">Urgency Classifier</h5>
+                                <p class="mb-0 text-muted small">Classifies help requests by priority</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="status-indicator status-online me-2"></div>
+                            <div>
+                                <h5 class="mb-1">Damage Analyzer</h5>
+                                <p class="mb-0 text-muted small">Assesses damage from uploaded images</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="status-indicator status-online me-2"></div>
+                            <div>
+                                <h5 class="mb-1">Volunteer Matcher</h5>
+                                <p class="mb-0 text-muted small">Matches victims with appropriate volunteers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Resources Needed -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card border-0 bg-dark shadow-sm">
+            <div class="card-header bg-primary bg-opacity-25 border-0">
+                <h3 class="mb-0"><i class="fas fa-boxes me-2"></i> Resources Needed</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row" id="resources-needed">
+                    <div class="col-12 text-center py-3">
+                        <div class="disaster-relief-spinner mx-auto mb-3"></div>
+                        <p>Analyzing resource needs...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load dashboard data
+    const loadDashboardData = async () => {
+        try {
+            const response = await fetch('/api/status');
+            const data = await response.json();
+            
+            if (data.status !== 'success') {
+                console.error('Failed to load dashboard data:', data.message);
+                return;
+            }
+            
+            // Update user counts
+            document.getElementById('total-users').textContent = data.users.victims + data.users.volunteers;
+            document.getElementById('victim-count').textContent = data.users.victims + ' Victims';
+            document.getElementById('volunteer-count').textContent = data.users.volunteers + ' Volunteers';
+            
+            // Update request counts
+            document.getElementById('pending-requests').textContent = data.requests.pending;
+            document.getElementById('active-matches').textContent = data.requests.matched;
+            document.getElementById('resolved-cases').textContent = data.requests.resolved;
+            
+            // Update help types table
+            const helpTypesTable = document.getElementById('help-types-table');
+            if (helpTypesTable) {
+                let tableHTML = '';
+                
+                if (Object.keys(data.requests.by_type).length === 0) {
+                    tableHTML = '<tr><td colspan="3" class="text-center">No help requests recorded yet</td></tr>';
+                } else {
+                    for (const [type, count] of Object.entries(data.requests.by_type)) {
+                        // Format type name
+                        const typeName = type.charAt(0).toUpperCase() + type.slice(1);
+                        
+                        // Choose icon based on help type
+                        let icon = 'question-circle';
+                        if (type === 'food') icon = 'utensils';
+                        else if (type === 'shelter') icon = 'home';
+                        else if (type === 'medical') icon = 'first-aid';
+                        else if (type === 'evacuation') icon = 'truck';
+                        else if (type === 'rescue') icon = 'life-ring';
+                        else if (type === 'supplies') icon = 'box';
+                        
+                        tableHTML += `
+                            <tr>
+                                <td><i class="fas fa-${icon} me-2"></i> ${typeName}</td>
+                                <td>${count}</td>
+                                <td>
+                                    <div class="progress" style="height: 6px;">
+                                        <div class="progress-bar" role="progressbar" style="width: ${Math.min(count * 5, 100)}%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                }
+                
+                helpTypesTable.innerHTML = tableHTML;
+            }
+            
+            // Update AI status
+            const aiStatus = document.getElementById('ai-status');
+            if (aiStatus) {
+                const statusHTML = `
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="status-indicator ${data.ai_status.urgency_classifier ? 'status-online' : 'status-offline'} me-2"></div>
+                            <div>
+                                <h5 class="mb-1">Urgency Classifier</h5>
+                                <p class="mb-0 text-muted small">Classifies help requests by priority</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="status-indicator ${data.ai_status.damage_analyzer ? 'status-online' : 'status-offline'} me-2"></div>
+                            <div>
+                                <h5 class="mb-1">Damage Analyzer</h5>
+                                <p class="mb-0 text-muted small">Assesses damage from uploaded images</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="status-indicator ${data.ai_status.volunteer_matcher ? 'status-online' : 'status-offline'} me-2"></div>
+                            <div>
+                                <h5 class="mb-1">Volunteer Matcher</h5>
+                                <p class="mb-0 text-muted small">Matches victims with appropriate volunteers</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                aiStatus.innerHTML = statusHTML;
+            }
+            
+            // Simulate recent activity (in a real app, this would come from the backend)
+            const recentActivity = document.getElementById('recent-activity');
+            if (recentActivity) {
+                const activities = [
+                    { icon: 'user-plus', text: 'New victim registered', time: '2 minutes ago', type: 'info' },
+                    { icon: 'hands-helping', text: 'Volunteer matched with victim', time: '5 minutes ago', type: 'success' },
+                    { icon: 'hands', text: 'New help request (medical)', time: '15 minutes ago', type: 'danger' },
+                    { icon: 'check-circle', text: 'Help request resolved', time: '30 minutes ago', type: 'success' },
+                    { icon: 'user-plus', text: 'New volunteer registered', time: '45 minutes ago', type: 'info' }
+                ];
+                
+                let activityHTML = '';
+                
+                for (const activity of activities) {
+                    let textColor = '';
+                    if (activity.type === 'danger') textColor = 'text-danger';
+                    else if (activity.type === 'success') textColor = 'text-success';
+                    else if (activity.type === 'info') textColor = 'text-info';
+                    
+                    activityHTML += `
+                        <div class="list-group-item bg-transparent border-secondary d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fas fa-${activity.icon} fa-lg ${textColor}"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <p class="mb-0">${activity.text}</p>
+                                <small class="text-muted">${activity.time}</small>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                recentActivity.innerHTML = activityHTML;
+            }
+            
+            // Update resources needed
+            const resourcesNeeded = document.getElementById('resources-needed');
+            if (resourcesNeeded) {
+                // In a real app, this would come from resource forecasts
+                const resources = [
+                    { type: 'food', demand: 'High', priority: 'critical', icon: 'utensils' },
+                    { type: 'shelter', demand: 'Medium', priority: 'high', icon: 'home' },
+                    { type: 'medical', demand: 'High', priority: 'critical', icon: 'first-aid' },
+                    { type: 'rescue', demand: 'Medium', priority: 'high', icon: 'life-ring' },
+                    { type: 'supplies', demand: 'Low', priority: 'normal', icon: 'box' },
+                    { type: 'evacuation', demand: 'Medium', priority: 'high', icon: 'truck' }
+                ];
+                
+                let resourcesHTML = '';
+                
+                for (const resource of resources) {
+                    let bgClass = 'bg-info bg-opacity-25';
+                    if (resource.priority === 'critical') bgClass = 'bg-danger bg-opacity-25';
+                    else if (resource.priority === 'high') bgClass = 'bg-warning bg-opacity-25';
+                    
+                    let borderClass = 'border-info';
+                    if (resource.priority === 'critical') borderClass = 'border-danger';
+                    else if (resource.priority === 'high') borderClass = 'border-warning';
+                    
+                    resourcesHTML += `
+                        <div class="col-md-4 col-sm-6 mb-3">
+                            <div class="card ${bgClass} border-0">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center">
+                                        <div class="me-3">
+                                            <i class="fas fa-${resource.icon} fa-2x"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="mb-1">${resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}</h5>
+                                            <p class="mb-0">Demand: <strong>${resource.demand}</strong></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                resourcesNeeded.innerHTML = resourcesHTML;
+            }
+            
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+        }
+    };
+    
+    // Load dashboard data on page load
+    loadDashboardData();
+    
+    // Refresh every 30 seconds
+    setInterval(loadDashboardData, 30000);
+});
+</script>
+{% endblock %}
